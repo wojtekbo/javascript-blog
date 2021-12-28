@@ -6,6 +6,7 @@ const optArticleSelector = '.post',
   optArticleTagsSelector = '.post-tags .list',
   optArticleAutorSelector = '.post-author',
   optTagsListSelector = '.tags.list',
+  optAuthorsListSelector = '.authors.list',
   optCloudClassCount = 5,
   optCloudClassPrefix = 'tag-size-';
 
@@ -208,6 +209,7 @@ generateTags();
 addClickListenersToTags();
 
 const generateAuthors = function () {
+  let allAuthors = {};
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
 
@@ -223,11 +225,30 @@ const generateAuthors = function () {
     const linkHTML = `<p>by: <a href="#author-${articleAuthor.toLocaleLowerCase().replace(' ', '-')}">${articleAuthor}</a></p>`;
     /* add generated code to HTML variable */
     html = html + linkHTML;
-
     /* insert HTML of all the links into the tags wrapper */
     articleAutorsWrapper.innerHTML = html;
     /* END LOOP: for every article: */
+    if (!allAuthors[articleAuthor]) {
+      /* [NEW] add tag to allTags object */
+      allAuthors[articleAuthor] = 1;
+    } else {
+      allAuthors[articleAuthor]++;
+    }
   }
+  console.log(allAuthors);
+  const authorList = document.querySelector(optAuthorsListSelector);
+  console.log(authorList);
+  let allAuthorsHTML = '';
+
+  for (let author in allAuthors) {
+    /* [NEW] generate code of a link and add it to allAuthorsHTML */
+    allAuthorsHTML += `<li><a href="#tag-${author.toLocaleLowerCase().replace(' ', '-')}">${author}</a></li>`;
+  }
+  /* [NEW] END LOOP: for each tag in allTags: */
+  console.log(allAuthorsHTML);
+  console.log(articles);
+  /*[NEW] add HTML from allAuthorsHTML to tagList */
+  authorList.innerHTML = allAuthorsHTML;
 };
 
 function authorClickHandler(event) {
@@ -261,7 +282,7 @@ function authorClickHandler(event) {
 
 const addClickListenersToAuthors = function () {
   /* find all links to tags */
-  const authors = document.querySelectorAll(`${optArticleAutorSelector} a`);
+  const authors = document.querySelectorAll(`.authors a`);
   /* START LOOP: for each link */
   for (let author of authors) {
     /* add tagClickHandler as event listener for that link */
